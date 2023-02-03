@@ -9,29 +9,36 @@ typedef float Scalar;
 typedef Eigen::MatrixXf Matrix; 
 typedef Eigen::RowVectorXf RowVector; 
 typedef Eigen::VectorXf ColVector; 
-  
+typedef std::vector<RowVector*> Data;
+typedef std::vector<uint> Topology;
+
 // neural network implementation class! 
 class NeuralNetwork { 
 public: 
     // constructor 
-    NeuralNetwork(std::vector<uint> topology, Scalar learningRate = Scalar(0.005)); 
+    NeuralNetwork(const Topology& topology, Scalar learningRate = Scalar(0.005));
   
     // function for forward propagation of data 
-    void propagateForward(RowVector& input); 
+    void propagateForward(const RowVector& input);
   
     // function for backward propagation of errors made by neurons 
-    void propagateBackward(RowVector& output); 
+    void propagateBackward(const RowVector& output);
   
     // function to calculate errors made by neurons in each layer 
-    void calcErrors(RowVector& output); 
+    void calcErrors(const RowVector& output);
   
     // function to update the weights of connections 
     void updateWeights(); 
   
     // function to train the neural network give an array of data points 
-    void train(std::vector<RowVector*> data); 
-  
-    // storage objects for working of neural network 
+    void train(const Data& in_data, const Data& out_data);
+
+    // // pointer to activation function
+    // Scalar (*activationFunction)(Scalar x) = nullptr;
+
+    // // pointer to activation function derivative
+    // Scalar (*activationFunctionDerivative)(Scalar x) = nullptr;
+    // storage objects for working of neural network
     /* 
           use pointers when using std::vector<Class> as std::vector<Class> calls destructor of  
           Class as soon as it is pushed back! when we use pointers it can't do that, besides 
@@ -42,5 +49,9 @@ public:
     std::vector<RowVector*> cacheLayers; // stores the unactivated (activation fn not yet applied) values of layers 
     std::vector<RowVector*> deltas; // stores the error contribution of each neurons 
     std::vector<Matrix*> weights; // the connection weights itself 
-    Scalar learningRate; 
+    Scalar learningRate;
+    Topology topology;
 };
+
+
+void ReadCSV(std::string filename, std::vector<RowVector*>& data);
